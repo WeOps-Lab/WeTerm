@@ -1,6 +1,7 @@
 package index
 
 import (
+	"os"
 	"weterm/model"
 
 	"github.com/gdamore/tcell/v2"
@@ -13,33 +14,106 @@ type MenuItem struct {
 	SubItems []MenuItem
 }
 
+var aioMainMenuItems = []MenuItem{
+	{
+		Name: "WeOps一体机",
+		Action: func(bs *model.AppModel) {
+		},
+		SubItems: aioMenu,
+	},
+}
+
 // Main menu items
 var mainMenuItems = []MenuItem{
+	//{
+	//	Name: "示例",
+	//	Action: func(bs *model.AppModel) {
+	//	},
+	//	SubItems: sampleMenu,
+	//},
+	// {
+	// 	Name: "WeOps安装",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	SubItems: installMenu,
+	// },
 	{
-		Name: "示例",
+		Name: "服务概览",
 		Action: func(bs *model.AppModel) {
 		},
-		SubItems: sampleMenu,
+		SubItems: componentHealthMenu,
 	},
 	{
-		Name: "WeOps安装",
-		Action: func(bs *model.AppModel) {
-		},
-		SubItems: installMenu,
+		Name:     "信息收集",
+		Action:   func(am *model.AppModel) {},
+		SubItems: collectMenu,
 	},
-	{
-		Name: "运维工具",
-		Action: func(bs *model.AppModel) {
-		},
-		SubItems: opsMenu,
-	},
-	{
-		Name: "健康检查",
-		Action: func(bs *model.AppModel) {
-			bs.CorePages.SwitchToPage("status_check")
-		},
-		SubItems: healthMenu,
-	},
+	// {
+	// 	Name: "-- 服务状态",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	SubItems: serviceHealthMenu,
+	// },
+	// {
+	// 	Name: "-- 主机状态",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: healthMenu,
+	// },
+	// {
+	// 	Name: "-- 组件状态-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	SubItems: componentHealthMenu,
+	// },
+	// {
+	// 	Name: "运维工具-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
+	// {
+	// 	Name: "-- 服务启停-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	SubItems: servicesOpsMenu,
+	// },
+	// {
+	// 	Name: "-- 组件操作-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	SubItems: componentsOpsMenu,
+	// },
+	// {
+	// 	Name: "-- 备份恢复-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
+	// {
+	// 	Name: "-- 组件操作-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
+	// {
+	// 	Name: "-- 磁盘清理-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
+	// {
+	// 	Name: "-- 接入点操作-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
+	// {
+	// 	Name: "-- 数据初始化-未实现",
+	// 	Action: func(bs *model.AppModel) {
+	// 	},
+	// 	//SubItems: opsMenu,
+	// },
 	{
 		Name: "退出",
 		Action: func(bs *model.AppModel) {
@@ -87,6 +161,9 @@ func SetUpMenuPage(receiver *model.AppModel) {
 
 func createMainMenu(receiver *model.AppModel) *tview.List {
 	mainMenu := tview.NewList()
+	if os.Getenv("AIO") == "true" {
+		mainMenuItems = append(aioMainMenuItems, mainMenuItems...)
+	}
 	for _, item := range mainMenuItems {
 		action := item.Action // Create a new variable to store the action
 		mainMenu.AddItem(item.Name, "", 0, func() {
